@@ -16,6 +16,9 @@ pygame.display.set_caption("Пинг-понг")
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
+# Шрифт
+font = pygame.font.Font(None, 74)
+
 # Определение классов
 class Paddle:
     def __init__(self, x, y, width, height, speed):
@@ -48,13 +51,21 @@ class Ball:
     def bounce(self):
         if self.rect.top <= 0 or self.rect.bottom >= HEIGHT:
             self.speed_y *= -1
-        if self.rect.left <= 0 or self.rect.right >= WIDTH:
-            self.speed_x *= -1
+
+    def reset_position(self):
+        self.rect.x = WIDTH // 2 - self.radius
+        self.rect.y = HEIGHT // 2 - self.radius
+        # Можно рандомизировать скорость для разнообразия
+        self.speed_x *= -1  # Изменение направления при повторном начале
 
 # Создание объектов
 paddle_left = Paddle(30, HEIGHT // 2 - 60, 10, 120, 10)
 paddle_right = Paddle(WIDTH - 40, HEIGHT // 2 - 60, 10, 120, 10)
-ball = Ball(WIDTH // 2, HEIGHT // 2, 15, 2, 2)  # Замедление скорости мяча
+ball = Ball(WIDTH // 2, HEIGHT // 2, 15, 2, 2)
+
+# Переменные счета
+score_left = 0
+score_right = 0
 
 # Основной цикл игры
 running = True
@@ -81,12 +92,28 @@ while running:
     # Проверка столкновений с ракетками
     if ball.rect.colliderect(paddle_left.rect) or ball.rect.colliderect(paddle_right.rect):
         ball.speed_x *= -1
+
+    # Проверка на выход мяча за границы
+    if ball.rect.left <= 0:
+        score_right += 1
+        ball.reset_position()
+    elif ball.rect.right >= WIDTH:
+        score_left += 1
+        ball.reset_position()
+
+    # Очистка экрана
     screen.fill(BLACK)
 
     # Отрисовка объектов
     paddle_left.draw(screen)
     paddle_right.draw(screen)
     ball.draw(screen)
+
+    # Отображение счета
+    score_text_left = font.render(str(score_left), True, WHITE)
+    score_text_right = font.render(str(score_right), True, WHITE)
+    screen.blit(score_text_left, (WIDTH // 4, 10))
+    screen.blit(score_text_right, (WIDTH * 3 // 4, 10))
 
     # Обновление экрана
     pygame.display.flip()

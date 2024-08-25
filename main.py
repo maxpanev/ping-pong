@@ -7,11 +7,11 @@ screen = pygame.display.set_mode(window_size) # Создаем экран
 pygame.display.set_caption('Игра "Тест"') # Даем название окна
 
 # Загружаем изображения
-image = pygame.image.load('Python.png') # Загружаем фоновое изображение
+image = pygame.image.load('images/Python.png') # Загружаем фоновое изображение
 image_rect = image.get_rect() # Создаём переменную для хитбокса
 #speed = 1 # Задаём скорость
 
-image2 = pygame.image.load('Java.png') # Загружаем второе фоновое изображение
+image2 = pygame.image.load('images/Java.png') # Загружаем второе фоновое изображение
 image_rect2 = image2.get_rect()
 
 # Загружаем игровой цикл
