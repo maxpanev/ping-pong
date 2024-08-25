@@ -18,6 +18,7 @@ BLACK = (0, 0, 0)
 
 # Шрифт
 font = pygame.font.Font(None, 74)
+small_font = pygame.font.Font(None, 50)
 
 # Определение классов
 class Paddle:
@@ -55,7 +56,6 @@ class Ball:
     def reset_position(self):
         self.rect.x = WIDTH // 2 - self.radius
         self.rect.y = HEIGHT // 2 - self.radius
-        # Можно рандомизировать скорость для разнообразия
         self.speed_x *= -1  # Изменение направления при повторном начале
 
 # Создание объектов
@@ -114,6 +114,20 @@ while running:
     score_text_right = font.render(str(score_right), True, WHITE)
     screen.blit(score_text_left, (WIDTH // 4, 10))
     screen.blit(score_text_right, (WIDTH * 3 // 4, 10))
+
+    # Проверка на победу
+    if score_left >= 2 or score_right >= 2:
+        winner_text = "Победил" + " " + ("левый" if score_left >= 2 else "правый") + " " + "игрок "
+        winner_surface = small_font.render(winner_text, True, WHITE)
+        screen.blit(winner_surface, (WIDTH // 2 - winner_surface.get_width() // 2, HEIGHT // 2))
+
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Пауза перед сбросом
+
+        # Сброс счета и позиции
+        score_left = 0
+        score_right = 0
+        ball.reset_position()
 
     # Обновление экрана
     pygame.display.flip()
