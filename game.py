@@ -15,10 +15,16 @@ pygame.display.set_caption("Пинг-понг")
 # Определение цветов
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 # Шрифт
 font = pygame.font.Font(None, 74)
 small_font = pygame.font.Font(None, 50)
+
+# Начальная скорость мяча
+INITIAL_SPEED_X = 4
+INITIAL_SPEED_Y = 4
+SPEED_INCREMENT = 0.5  # Увеличение скорости мяча при каждом отскоке от ракетки
 
 # Определение классов
 class Paddle:
@@ -47,7 +53,7 @@ class Ball:
         self.rect.y += self.speed_y
 
     def draw(self, screen):
-        pygame.draw.ellipse(screen, WHITE, self.rect)
+        pygame.draw.ellipse(screen, RED, self.rect)
 
     def bounce(self):
         if self.rect.top <= 0 or self.rect.bottom >= HEIGHT:
@@ -56,12 +62,13 @@ class Ball:
     def reset_position(self):
         self.rect.x = WIDTH // 2 - self.radius
         self.rect.y = HEIGHT // 2 - self.radius
-        self.speed_x *= -1  # Изменение направления при повторном начале
+        self.speed_x = INITIAL_SPEED_X * (-1 if self.speed_x > 0 else 1)  # Сброс скорости
+        self.speed_y = INITIAL_SPEED_Y * (1 if self.speed_y > 0 else -1)
 
 # Создание объектов
 paddle_left = Paddle(30, HEIGHT // 2 - 60, 10, 120, 10)
 paddle_right = Paddle(WIDTH - 40, HEIGHT // 2 - 60, 10, 120, 10)
-ball = Ball(WIDTH // 2, HEIGHT // 2, 15, 2, 2)
+ball = Ball(WIDTH // 2, HEIGHT // 2, 15, INITIAL_SPEED_X, INITIAL_SPEED_Y)
 
 # Переменные счета
 score_left = 0
@@ -92,6 +99,9 @@ while running:
     # Проверка столкновений с ракетками
     if ball.rect.colliderect(paddle_left.rect) or ball.rect.colliderect(paddle_right.rect):
         ball.speed_x *= -1
+        # Увеличение скорости при отскоке от ракетки
+        ball.speed_x += SPEED_INCREMENT if ball.speed_x > 0 else -SPEED_INCREMENT
+        ball.speed_y += SPEED_INCREMENT if ball.speed_y > 0 else -SPEED_INCREMENT
 
     # Проверка на выход мяча за границы
     if ball.rect.left <= 0:
